@@ -98,4 +98,15 @@ class LivroRepositoryTest {
         var livro = livroRepository.findByGenero(GeneroLivro.TERROR);
         livro.forEach(livro1 -> System.out.println(livro1.getTitulo()));
     }
+
+    @Test
+    void deletarPorNome(){
+        livroRepository.deletarPorNome("Assim Falou Zaratustra");
+    }
+
+    @Test
+    void deletarTituloIdAutor(){
+        UUID id = UUID.fromString("c06f5e0c-f99f-44f2-8bee-1c96c90d41a9");
+        livroRepository.deletarLivro("It", id);
+    }
 }
