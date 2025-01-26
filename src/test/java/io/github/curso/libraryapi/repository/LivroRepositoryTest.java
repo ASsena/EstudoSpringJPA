@@ -6,6 +6,7 @@ import io.github.curso.libraryapi.model.Livro;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -72,20 +73,20 @@ class LivroRepositoryTest {
     }
 
 
-    @Test
-    void salvarLivro2(){
-        var livro = new Livro();
-        livro.setGenero(GeneroLivro.TERROR);
-        livro.setIsbn("09878-76754");
-        livro.setData_publicacao(LocalDate.of(1986,9,15));
-        livro.setPreco(BigDecimal.valueOf(83));
-        livro.setTitulo("It");
+  //  @Test
+   // void salvarLivro2(){
+     //   var livro = new Livro();
+     //   livro.setGenero(GeneroLivro.TERROR);
+      //  livro.setIsbn("09878-76754");
+     //   livro.setData_publicacao(LocalDate.of(1986,9,15));
+      //  livro.setPreco(BigDecimal.valueOf(83));
+      //  livro.setTitulo("It");
 
-        Autor autor = autorRepository.findByNome("Stephen King").orElse(null);
+      //  Autor autor = autorRepository.findByNome("Stephen King").orElse(null);
 
-        livro.setAutor(autor);
-        livroRepository.save(livro);
-    }
+      //  livro.setAutor(autor);
+      //  livroRepository.save(livro);
+  //  }
 
     @Test
     void buscaComQuery(){
@@ -108,5 +109,29 @@ class LivroRepositoryTest {
     void deletarTituloIdAutor(){
         UUID id = UUID.fromString("c06f5e0c-f99f-44f2-8bee-1c96c90d41a9");
         livroRepository.deletarLivro("It", id);
+    }
+
+    @Test
+    void testeCascade(){
+        Autor autor = new Autor();
+        autor.setData_nascimento(LocalDate.of(2007,9,2));
+        autor.setNome("Arthur Sena");
+        autor.setNacionalidade("Brasileira");
+
+        var livro = new Livro();
+        livro.setGenero(GeneroLivro.TERROR);
+        livro.setIsbn("09878-82738");
+        livro.setData_publicacao(LocalDate.of(2014,12,5));
+        livro.setPreco(BigDecimal.valueOf(930));
+        livro.setTitulo("Sobre mudanças");
+        livro.setAutor(autor);
+        livroRepository.save(livro);
+
+        //autorRepository.deletePorNome("Arthur Sena");
+    }
+
+    @Test
+    void delete(){
+        livroRepository.deletarPorNome("Sobre mudanças");
     }
 }

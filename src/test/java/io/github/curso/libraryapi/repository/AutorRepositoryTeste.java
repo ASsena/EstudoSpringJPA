@@ -6,6 +6,7 @@ import io.github.curso.libraryapi.model.Livro;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
@@ -22,6 +23,8 @@ public class AutorRepositoryTeste {
     private AutorRepository autorRepository;
     @Autowired
     private LivroRepository livroRepository;
+    @Autowired
+    private LocalContainerEntityManagerFactoryBean entityManagerFactory;
 
     @Test
     public void salvarAutorTest(){
@@ -72,9 +75,10 @@ public class AutorRepositoryTeste {
     }
 
     @Test
+    @Transactional
     void salvarAutorComLivrosTest(){
         Autor autor = new Autor();
-        autor.setNome("Antonio");
+        autor.setNome("Arthur");
         autor.setNacionalidade("Estadunidense");
         autor.setData_nascimento(LocalDate.of(1970,8,5));
 
@@ -101,8 +105,8 @@ public class AutorRepositoryTeste {
 
         // livroRepository.saveAll(autor.getLivros());
 
-        autorRepository.save(autor);
-
+       autorRepository.save(autor);
+       
     }
 
     @Test

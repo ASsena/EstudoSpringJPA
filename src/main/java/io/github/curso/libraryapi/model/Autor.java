@@ -1,15 +1,19 @@
 package io.github.curso.libraryapi.model;
 
 import jakarta.persistence.*;
-import lombok.*;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
 
 @Entity
 @Table(name = "autor")
+@EntityListeners(AuditingEntityListener.class) // Verifica se houve alguma modificação na classe(é preciso uma congifuração no Application)
 public class Autor {
 
     @Id
@@ -28,6 +32,16 @@ public class Autor {
     @OneToMany(mappedBy = "autor", cascade = CascadeType.ALL)
     private List<Livro> livros;
 
+    @CreatedDate //Se houver uma ação de CRIAÇÃO, ele joga a data e a hora nessa variável
+    @Column(name = "data_cadastro")
+    private LocalDateTime dataCadastro;
+
+    @LastModifiedDate //Se houver uma ação de EDIÇÃO, ele joga a data e a hora nessa variável
+    @Column(name = "data_atualizacao")
+    private LocalDateTime dataAtualizacao;
+
+    @Column(name = "id_usuario")
+    private UUID usuario;
 
 
     public Autor(UUID id, String nome, LocalDate data_nascimento, String nacionalidade) {
@@ -38,6 +52,30 @@ public class Autor {
     }
 
     public Autor() {
+    }
+
+    public LocalDateTime getDataCadastro() {
+        return dataCadastro;
+    }
+
+    public void setDataCadastro(LocalDateTime dataCadastro) {
+        this.dataCadastro = dataCadastro;
+    }
+
+    public LocalDateTime getDataAtualizacao() {
+        return dataAtualizacao;
+    }
+
+    public void setDataAtualizacao(LocalDateTime dataAtualizacao) {
+        this.dataAtualizacao = dataAtualizacao;
+    }
+
+    public UUID getUsuario() {
+        return usuario;
+    }
+
+    public void setUsuario(UUID usuario) {
+        this.usuario = usuario;
     }
 
     public List<Livro> getLivros() {
