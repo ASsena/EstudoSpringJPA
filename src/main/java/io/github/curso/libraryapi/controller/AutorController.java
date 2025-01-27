@@ -1,12 +1,13 @@
 package io.github.curso.libraryapi.controller;
 
 import io.github.curso.libraryapi.dto.AutorDTO;
+import io.github.curso.libraryapi.dto.ErroResposta;
+import io.github.curso.libraryapi.exceptions.RegistroDupilcadoException;
 import io.github.curso.libraryapi.model.Autor;
+import io.github.curso.libraryapi.repository.AutorRepository;
 import io.github.curso.libraryapi.service.AutorService;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
@@ -19,21 +20,29 @@ import java.util.UUID;
 public class AutorController {
 
     private final AutorService autorService;
+    private final AutorRepository autorRepository;
 
-    public AutorController(AutorService autorService){
+    public AutorController(AutorService autorService, AutorRepository autorRepository){
         this.autorService = autorService;
+        this.autorRepository = autorRepository;
     }
 
     @PostMapping
-    public ResponseEntity<Void> salvar(@RequestBody AutorDTO autor) {
-        Autor autorEntidade = autor.mapearAutor();
-        autorService.autorSalvar(autorEntidade);
-        URI location = ServletUriComponentsBuilder
-                .fromCurrentRequest()
-                .path("/{id}")
-                .buildAndExpand(autorEntidade.getId())
-                .toUri();
-        return ResponseEntity.created(location).build();
+    public ResponseEntity<?> salvar(@RequestBody AutorDTO autor) {
+       try{
+           Autor autorEntidade = autor.mapearAutor();
+           autorService.autorSalvar(autorEntidade);
+           URI location = ServletUriComponentsBuilder
+                   .fromCurrentRequest()
+                   .path("/{id}")
+                   .buildAndExpand(autorEntidade.getId())
+                   .toUri();
+           return ResponseEntity.created(location).build();
+       }catch (RegistroDupilcadoException e){
+           var erroDTO = ErroResposta.conflito(e.getMessage());
+           return ResponseEntity.status(erroDTO.status()).body(erroDTO);
+       }
+
     }
 
     @GetMapping("{id}")
@@ -66,8 +75,16 @@ public class AutorController {
             @RequestParam(value = "nacionalidade", required = false) String nacionalidade){
         var autores = autorService.pesquisa(nome, nacionalidade);
         return ResponseEntity.ok(autores);
+    }
 
+    @PutMapping("{id}")
+    public ResponseEntity<Void> atualizar(
+            @PathVariable("id") String idDto,
+            @RequestBody AutorDTO autorDTO){
 
+        autorService.atualizar(idDto, autorDTO);
+
+        return ResponseEntity.noContent().build();
 
     }
 }

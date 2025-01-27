@@ -18,19 +18,14 @@ public interface AutorRepository extends JpaRepository<Autor, UUID> {
     List<Autor> findByNomeAndNacionalidade(String nome, String nacionalidade);
 
 
-   // @Query("""
-   //     select a from Autor a
-  //      where a.nome = ?1 and a.nacionalidade = ?2 and a.data_nascimento = ?3
-//""")
-   // Optional<Autor> encontrarNomeNacionalidadeDataNasc(String nome,
-       //                                                String nacionalidade,
-                   //                                    LocalDate dataNasc);
-        @Modifying
-        @Transactional
-        @Query("""
-            delete from Autor a
-            where a.nome = ?1
+    @Query("""
+        select a from Autor a
+        where a.nome = ?1 and a.nacionalidade = ?2 and a.data_nascimento = ?3
 """)
-    void deletePorNome(String nome);
+    Optional<Autor> encontrarNomeNacionalidadeDataNasc(String nome,
+                                                       String nacionalidade,
+                                                       LocalDate dataNasc);
+
+    void deleteByNome(String nome);
 
 }
